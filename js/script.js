@@ -16,3 +16,74 @@ Consigli del giorno:
 > - Immaginate la logica come fosse uno snack: "Dati 2 array di numeri, indica quali e quanti numeri ci sono in comune tra i due array"*/
 
 
+const countdownElement = document.getElementById("countdown");
+const numbersList = document.getElementById("numbers-list");
+const form = document.getElementById("answers-form");
+const inputGroup = document.getElementById("input-group");
+const messageElement = document.getElementById("message");
+
+
+let randomNumbers = [];
+let timer;
+
+
+const generateRandomNumbers = (count, min, max) => {
+  const numbers = new Set();
+  while (numbers.size < count) {
+    const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    numbers.add(randomNum);
+  }
+  return Array.from(numbers);
+};
+
+
+const startCountdown = (duration, onComplete) => {
+  let timeRemaining = duration;
+  countdownElement.textContent = timeRemaining;
+
+  timer = setInterval(() => {
+    timeRemaining -= 1;
+    countdownElement.textContent = timeRemaining;
+
+    if (timeRemaining <= 0) {
+      clearInterval(timer);
+      onComplete();
+    }
+  }, 1000);
+};
+
+
+const startGame = () => {
+  
+  randomNumbers = generateRandomNumbers(5, 1, 50);
+
+ 
+  numbersList.innerHTML = randomNumbers.map(num => `<li class="fs-3">${num}</li>`).join("");
+
+  
+  startCountdown(30, () => {
+    
+    numbersList.innerHTML = "";
+    form.classList.remove("d-none");
+    countdownElement.textContent = "Inserisci i numeri che ricordi!";
+  });
+};
+
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  
+  const userNumbers = Array.from(inputGroup.querySelectorAll("input")).map(input => parseInt(input.value, 10));
+
+  
+  const correctNumbers = userNumbers.filter(num => randomNumbers.includes(num));
+
+  
+  messageElement.textContent = `Hai indovinato ${correctNumbers.length} numeri: ${correctNumbers.join(", ")}`;
+});
+
+
+startGame();
+
+//!!!!!!!!!!HO DOVUTO CHIEDERE IL RAGIONAMENTO A CHATGPT E PRENDERE SPUNTO DA CHATGPT E VIDEO YOUTUBE, DA SOLO NON CI SAREI MAI ARRIVATO!!!!!!!!!
